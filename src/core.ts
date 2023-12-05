@@ -1,24 +1,7 @@
 import path from "path";
 import fs from 'fs'
-import { MPAHeroPluginOption, MakeRequired } from "./type";
+import { EntryList, MPAHeroPluginOption, MakeRequired } from "./type";
 
-export type Entry = {
-  /** id */
-  id: string;
-  /** 入口的路径 */
-  entryPath: string;
-  /** 模板文件的路径 */
-  templatePath: string;
-  /** 虚拟模块的路径 */
-  virtualTemplatePath: string;
-  /** 虚拟html文件的路径 */
-  virtualTemplateFilePath: string;
-  /** 是否需要虚拟模块 */
-  needVirtualTemplate: boolean;
-}
-
-
-export type EntryList = Entry[]
 /**
  * Checks if a file exists in the specified directory.
  *
@@ -108,7 +91,6 @@ export const getEntryList = (scanFileDir: string[], scanFileName: string, templa
       id: item.id,
       entryPath: item.entryPath,
       templatePath: nearestTemplatePath,
-      needVirtualTemplate: idParentDir !== nearestTemplatePath,
       virtualTemplatePath: idParentDir,
       virtualTemplateFilePath: '.'
     })
@@ -120,20 +102,28 @@ export const genInputConfig = ({
   scanFileDir,
   scanFileName,
   outputFileDir,
-  enableParentFileName,
   templateName,
 }: MakeRequired<MPAHeroPluginOption>) => {
-  console.log({
-    scanFileDir,
-    scanFileName,
-    outputFileDir,
-    enableParentFileName,
-    templateName,
-  });
   const entryList = getEntryList(scanFileDir, scanFileName, templateName)
   const inputConfig: Record<string, string> = {}
   entryList.forEach((item)=>{
-    const tempPath = path.resolve(item.virtualTemplatePath, `${templateName}.html`)
+    // 更新虚拟模板路径
+    let virtualTemplatePathTemp = item.virtualTemplatePath
+    // 虚拟模板路径=>删除scanFileDir目录
+    for (let index = 0; index < scanFileDir.length; index++) {
+      let dir = scanFileDir[index];
+      if(dir.startsWith('./')){
+        dir = dir.replace('./', '')
+      }
+      if(item.virtualTemplatePath.startsWith(dir)){
+        virtualTemplatePathTemp = item.virtualTemplatePath.replace(dir, '')
+        break
+      }
+    }
+    // 虚拟模板路径=>增加outputFile目录
+    virtualTemplatePathTemp = path.join(outputFileDir, virtualTemplatePathTemp)
+    // 不管templateName是什么，最后都是生成index.html
+    const tempPath = path.resolve(virtualTemplatePathTemp, `index.html`)
     item.virtualTemplateFilePath = tempPath
     let id = item.id.replace(/\//, '-')
     while (id.indexOf('/') !== -1) {
@@ -141,9 +131,6 @@ export const genInputConfig = ({
     }
     inputConfig[id] = tempPath
   })
-  // console.log('entryList', entryList);
-  // console.log('inputConfig', inputConfig);
-  
-  return {inputConfig, entryList}
+  return { inputConfig, entryList }
 };
 

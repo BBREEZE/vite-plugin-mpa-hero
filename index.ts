@@ -4,8 +4,9 @@ import fs from 'fs'
 import { ColoringConsole } from './src/coloring-console';
 import { Plugin, ResolvedConfig, UserConfig } from 'vite';
 import { defaultPluginOption } from './src/default';
-import {MPAHeroPluginOption} from './src/type'
-import {Entry, genInputConfig} from './src/core'
+import {Entry, MPAHeroPluginOption} from './src/type'
+import {genInputConfig} from './src/core'
+import {reactMiddleTemplate} from './src/template/middleTemplate'
 
 function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
   // 合并默认配置
@@ -18,7 +19,6 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
     scanFileDir: mergedPluginOption.scanFileDir,
     scanFileName: mergedPluginOption.scanFileName,
     outputFileDir: mergedPluginOption.outputFileDir,
-    enableParentFileName: mergedPluginOption.enableParentFileName,
     templateName: mergedPluginOption.templateName,
     enableDevDirectory: mergedPluginOption.enableDevDirectory
   })
@@ -30,49 +30,41 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
     name: 'vite:mpa-hero-plugin',
     enforce: 'pre',
     resolveId: (id) => {
+      // 存储需要解析的模块
       for(let item of entryList){
         if(item.virtualTemplateFilePath === id){
           resolvedVirtualModuleIdMap.set(id, item)
           return id
         }
       }
-      if(id.endsWith('index.tsx') && id.startsWith('/mpa-hero/')){
+      // 记录需要处理的id
+      if(id.endsWith(mergedPluginOption.scanFileName) && id.startsWith('/mpa-hero/')){
         middleTemplateIdList.push(id)
         return id
       }
 
     },
-    async load(id) {
-      
+    load(id) {
+      // 生成虚拟HTML模板
       if(resolvedVirtualModuleIdMap.has(id)){
         const entry = resolvedVirtualModuleIdMap.get(id)
         let template = ''
         const templatePath = entry?.templatePath || ''
-        
+        // 读取获取到的模板文件
         const templateContent = fs.readFileSync(path.resolve(templatePath, `${mergedPluginOption.templateName}.html`), 'utf-8')
         template = templateContent.replace('</body>', `<script type="module" src="/mpa-hero/${entry?.entryPath}"></script></body>`)
 
         return template 
       }
-
+      // 生成对应的中间模板
       if(middleTemplateIdList.includes(id)){
-        const middleTemplate = id.replace('/mpa-hero', '')
-        return `
-          import React from 'react'
-          import ReactDOM from 'react-dom/client'
-          import App from '${middleTemplate}'
-          
-          ReactDOM.createRoot(document.getElementById('root')!).render(
-            <React.StrictMode>
-              <App />
-            </React.StrictMode>,
-          )
-        `
+        const middleTemplatePath = id.replace('/mpa-hero', '')
+        return reactMiddleTemplate(middleTemplatePath)
       }
     },
     config(config, { command }) {
       // 处理 rollupOptions.input原始值,转换成object
-      const inputSourceConfig = config.build?.rollupOptions?.input
+      const inputSourceConfig = config.build?.rollupOptions?.input || {}
       let inputFinalConfig = {}
       if(typeof inputSourceConfig === 'string'){
         inputFinalConfig = {
@@ -90,7 +82,6 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
       Object.entries(inputConfig).forEach(([key, value]) => {
         inputFinalConfig[key] = resolve(__dirname, value)
       })
-      console.log('inputFinalConfig', inputFinalConfig);
       
       if (command === 'build') {
         // 在这里修改 build 配置

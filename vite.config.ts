@@ -8,7 +8,8 @@ export default defineConfig({
     mpaHeroPlugin({
       scanFileDir: ['./tests/'],
       scanFileName: 'index.tsx',
-      templateName: 'index'
+      templateName: 'test',
+      outputFileDir: 'wjl',
     })
   ],
   // build: {

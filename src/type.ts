@@ -27,14 +27,25 @@ export type MPAHeroPluginOption = {
    * @default '/'
    */
   outputFileDir?: string
-  /**
-   * 是否改为父级目录名称
-   * 比如初始打包后为`/a/b/index.html`,配置`true`则变为`/a/b.html`
-   * @default true
-   */
-  enableParentFileName?: boolean
 }
 
 export type MakeRequired<T> = {
   [P in keyof T]-?: NonNullable<T[P]>; 
 };
+
+
+export type Entry = {
+  /** id */
+  id: string;
+  /** 入口的路径 */
+  entryPath: string;
+  /** 模板文件的路径 */
+  templatePath: string;
+  /** 虚拟模块的路径 */
+  virtualTemplatePath: string;
+  /** 虚拟html文件的路径 */
+  virtualTemplateFilePath: string;
+}
+
+
+export type EntryList = Entry[]
