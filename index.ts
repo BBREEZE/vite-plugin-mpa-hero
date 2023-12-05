@@ -65,36 +65,27 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
     config(config, { command }) {
       // 处理 rollupOptions.input原始值,转换成object
       const inputSourceConfig = config.build?.rollupOptions?.input || {}
-      let inputFinalConfig = {}
+      let inputFinalConfig: Record<string, string> = {}
       if(typeof inputSourceConfig === 'string'){
-        inputFinalConfig = {
-          // TODO: 修改默认input
-        }
       }else if(Array.isArray(inputSourceConfig)){
-        inputFinalConfig = {
-          // TODO: 修改默认input
-        }
+        inputSourceConfig.forEach((item, index)=>{
+          inputFinalConfig['_sourceConfig'+index] = item
+        })
       }else if(typeof inputSourceConfig === 'object'){
-        inputFinalConfig = {
-          // TODO: 修改默认input
-        }
+        inputFinalConfig = inputSourceConfig
       }
       Object.entries(inputConfig).forEach(([key, value]) => {
         inputFinalConfig[key] = resolve(__dirname, value)
       })
-      
-      if (command === 'build') {
-        // 在这里修改 build 配置
-        config.build = {
-          ...config.build,
-          rollupOptions: {
-            ...config.build?.rollupOptions,
-            input: {
-              ...inputFinalConfig
-            },
-          }
-        };
-      }
+      config.build = {
+        ...config.build,
+        rollupOptions: {
+          ...config.build?.rollupOptions,
+          input: {
+            ...inputFinalConfig
+          },
+        }
+      };
     },
   };
 }
