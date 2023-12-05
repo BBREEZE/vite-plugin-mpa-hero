@@ -24,37 +24,50 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
   })
   // 获取所有的虚拟模块 entry.needVirtualTemplate
   const resolvedVirtualModuleIdMap: Map<string, Entry> = new Map()
-  const virtualModuleId = 'virtual:mpa-hero'
-  const resolvedVirtualModuleId = '\0' + virtualModuleId
+  const middleTemplateIdList: string[] = []
 
   return {
     name: 'vite:mpa-hero-plugin',
     enforce: 'pre',
     resolveId: (id) => {
-      // console.log('id', id);
-      
       for(let item of entryList){
         if(item.virtualTemplateFilePath === id){
-          const temp = id
-          resolvedVirtualModuleIdMap.set(temp, item)
-          // console.log('temp', temp);
-          return temp
+          resolvedVirtualModuleIdMap.set(id, item)
+          return id
         }
       }
+      if(id.endsWith('index.tsx') && id.startsWith('/mpa-hero/')){
+        middleTemplateIdList.push(id)
+        return id
+      }
+
     },
     async load(id) {
       
       if(resolvedVirtualModuleIdMap.has(id)){
         const entry = resolvedVirtualModuleIdMap.get(id)
-        // console.log('entry', entry);
         let template = ''
         const templatePath = entry?.templatePath || ''
         
         const templateContent = fs.readFileSync(path.resolve(templatePath, `${mergedPluginOption.templateName}.html`), 'utf-8')
-        template = templateContent.replace('</body>', `<script type="module" src="/${entry?.entryPath}"></script></body>`)
+        template = templateContent.replace('</body>', `<script type="module" src="/mpa-hero/${entry?.entryPath}"></script></body>`)
 
-        // console.log('---templatePath---', template);
         return template 
+      }
+
+      if(middleTemplateIdList.includes(id)){
+        const middleTemplate = id.replace('/mpa-hero', '')
+        return `
+          import React from 'react'
+          import ReactDOM from 'react-dom/client'
+          import App from '${middleTemplate}'
+          
+          ReactDOM.createRoot(document.getElementById('root')!).render(
+            <React.StrictMode>
+              <App />
+            </React.StrictMode>,
+          )
+        `
       }
     },
     config(config, { command }) {
