@@ -6,11 +6,6 @@ vite打包mpa的插件，自动按规则生成打包文件。
 ```javascript
 {
   /**
-   * 当调试时，自动生成一个目录页来方便访问
-   * @default true
-   */
-  enableDevDirectory?: boolean
-  /**
    * 模板html的文件名称，会自动向上取
    * 假设当前目录不存在`[templateName].html`则查找父目录，直到根目录,根目录必须存在
    * @default 'template'
@@ -33,11 +28,5 @@ vite打包mpa的插件，自动按规则生成打包文件。
    * @default '/'
    */
   outputFileDir?: string
-  /**
-   * 是否改为父级目录名称
-   * 比如初始打包后为`/a/b/index.html`,配置`true`则变为`/a/b.html`
-   * @default true
-   */
-  enableParentFileName?: boolean
 }
 ```

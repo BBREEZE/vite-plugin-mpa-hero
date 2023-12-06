@@ -1,9 +1,7 @@
 
 export const defaultPluginOption = {
-  enableDevDirectory: true,
   templateName: "template",
-  scanFileDir: ['/src/pages/'],
+  scanFileDir: ['/src/pages'],
   scanFileName: 'main.js',
-  outputFileDir: './',
-  enableParentFileName: true
+  outputFileDir: './'
 }

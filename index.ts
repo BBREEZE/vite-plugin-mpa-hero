@@ -7,12 +7,13 @@ import { defaultPluginOption } from './src/default';
 import {Entry, MPAHeroPluginOption} from './src/type'
 import {genInputConfig} from './src/core'
 import {reactMiddleTemplate} from './src/template/middleTemplate'
+import { devServerMiddleware } from './src/dev-middleware'
 
 function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
   // 合并默认配置
   const mergedPluginOption = {
     ...defaultPluginOption,
-    ...pluginOption,
+    ...(pluginOption ? pluginOption : {}),
   };
   // 生成input，并且获取entry
   const {inputConfig, entryList} = genInputConfig({
@@ -20,7 +21,6 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
     scanFileName: mergedPluginOption.scanFileName,
     outputFileDir: mergedPluginOption.outputFileDir,
     templateName: mergedPluginOption.templateName,
-    enableDevDirectory: mergedPluginOption.enableDevDirectory
   })
   // 获取所有的虚拟模块 entry.needVirtualTemplate
   const resolvedVirtualModuleIdMap: Map<string, Entry> = new Map()
@@ -37,7 +37,7 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
           return id
         }
       }
-      // 记录需要处理的id
+      // 记录需要处理的id（mpa-hero是虚拟html模块请求的前缀）
       if(id.endsWith(mergedPluginOption.scanFileName) && id.startsWith('/mpa-hero/')){
         middleTemplateIdList.push(id)
         return id
@@ -62,6 +62,9 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
         return reactMiddleTemplate(middleTemplatePath)
       }
     },
+    configureServer(server) {
+      server.middlewares.use(devServerMiddleware(entryList, mergedPluginOption, server))
+    },
     config(config, { command }) {
       // 处理 rollupOptions.input原始值,转换成object
       const inputSourceConfig = config.build?.rollupOptions?.input || {}
@@ -77,7 +80,8 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
       Object.entries(inputConfig).forEach(([key, value]) => {
         inputFinalConfig[key] = resolve(__dirname, value)
       })
-      config.build = {
+      const newConfig = {...config}
+      newConfig.build = {
         ...config.build,
         rollupOptions: {
           ...config.build?.rollupOptions,
@@ -86,6 +90,7 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
           },
         }
       };
+      return newConfig
     },
   };
 }

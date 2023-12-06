@@ -6,16 +6,16 @@ import Inspect from 'vite-plugin-inspect'
 export default defineConfig({
   plugins: [Inspect(),react(),
     mpaHeroPlugin({
-      scanFileDir: ['./tests/'],
+      scanFileDir: ['./tests'],
       scanFileName: 'index.tsx',
-      templateName: 'test',
+      templateName: 'index',
       outputFileDir: 'wjl',
     })
   ],
   // build: {
   //   rollupOptions: {
   //     input: {
-  //       main: 'index.html'
+  //       'mainxxx': 'index.html'
   //     }
   //   }
   // }

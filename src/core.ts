@@ -1,6 +1,6 @@
 import path from "path";
 import fs from 'fs'
-import { EntryList, MPAHeroPluginOption, MakeRequired } from "./type";
+import { DirectoryTree, Entry, EntryList, MPAHeroPluginOption, MakeRequired } from "./type";
 
 /**
  * Checks if a file exists in the specified directory.
@@ -92,7 +92,8 @@ export const getEntryList = (scanFileDir: string[], scanFileName: string, templa
       entryPath: item.entryPath,
       templatePath: nearestTemplatePath,
       virtualTemplatePath: idParentDir,
-      virtualTemplateFilePath: '.'
+      virtualTemplateFilePath: '.',
+      virtualTemplateFileRelativePath: '.'
     })
   })
   return entryList
@@ -122,6 +123,8 @@ export const genInputConfig = ({
     }
     // 虚拟模板路径=>增加outputFile目录
     virtualTemplatePathTemp = path.join(outputFileDir, virtualTemplatePathTemp)
+    // 存储虚拟模板相对路径
+    item.virtualTemplateFileRelativePath = virtualTemplatePathTemp
     // 不管templateName是什么，最后都是生成index.html
     const tempPath = path.resolve(virtualTemplatePathTemp, `index.html`)
     item.virtualTemplateFilePath = tempPath
@@ -134,3 +137,39 @@ export const genInputConfig = ({
   return { inputConfig, entryList }
 };
 
+
+export const buildDirectoryTree = (paths: {entryPath: string, info: Entry}[]): DirectoryTree =>  {
+  const root: DirectoryTree = {};
+  paths.forEach(({entryPath, info}) => {
+    const parts = entryPath.split('/');
+    let currentLevel = root;
+    parts.forEach((part,index) => {
+      if (!currentLevel[part]) {
+        if(index === parts.length - 1){
+          currentLevel[part] = info.virtualTemplateFileRelativePath
+        }else{
+          currentLevel[part] = {};
+        }
+      }
+      currentLevel = currentLevel[part];
+    });
+  });
+  return root;
+}
+
+export const genATag = (str: string, href: string) => {
+  return `<a target="_blank" href="${href}">${str}</a>`
+}
+
+export const renderDirectoryTree = (data: DirectoryTree, fileName: string): string =>  {
+  let html = `<ul>`;
+  for (const key in data) {
+    html += `<li>${ key===fileName? genATag(key, data[key]+'/'):key }`;
+    const value = data[key];
+    if (typeof value === 'object') {
+      html += renderDirectoryTree(value as DirectoryTree, fileName);
+    }
+    html += `</li>`;
+  }
+  return html + `</ul>`; 
+}

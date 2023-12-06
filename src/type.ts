@@ -1,10 +1,5 @@
 export type MPAHeroPluginOption = {
   /**
-   * 当调试时，自动生成一个目录页来方便访问
-   * @default true
-   */
-  enableDevDirectory?: boolean
-  /**
    * 模板html的文件名称，会自动向上取
    * 假设当前目录不存在`[templateName].html`则查找父目录，直到根目录,根目录必须存在
    * @default 'template'
@@ -33,7 +28,7 @@ export type MakeRequired<T> = {
   [P in keyof T]-?: NonNullable<T[P]>; 
 };
 
-
+/** 入口类型 */
 export type Entry = {
   /** id */
   id: string;
@@ -45,7 +40,14 @@ export type Entry = {
   virtualTemplatePath: string;
   /** 虚拟html文件的路径 */
   virtualTemplateFilePath: string;
+  /** 虚拟html文件的相对路径 */
+  virtualTemplateFileRelativePath: string;
 }
 
-
+/** 入口列表 */
 export type EntryList = Entry[]
+
+/** 目录树结构 */
+export type DirectoryTree = {
+  [key: string]: DirectoryTree | {};
+};
