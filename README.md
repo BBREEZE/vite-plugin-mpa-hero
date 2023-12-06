@@ -40,34 +40,40 @@ export default defineConfig({
 })
 ```
 
+## 注意事项
+
+1. 请至少在根目录存在[templateName].html
+2. 请在[templateName].html包含id为root的节点，打包后的内容会挂载在此节点
+3. 请严格按照配置项填写
+
 ## Plugin Options
 
 ```javascript
-{
+export type MPAHeroPluginOption = {
   /**
    * 模板html的文件名称，会自动向上取
    * 假设当前目录不存在`[templateName].html`则查找父目录，直到根目录,根目录必须存在
    * @default 'template'
    */
-  templateName?: string
+  templateName?: string;
   /**
    * 要扫描的文件夹
    * 输出目录会从当前传递目录下一级开始
-   * @default ['/src/pages/']
+   * @default ['./src/pages/']
    */
-  scanFileDir?: string[]
+  scanFileDir?: string[];
   /**
    * 入口文件名,需要扫描获取作为入口的文件名
-   * @default 'index.js'
+   * @default 'main.js'
    */
-  scanFileName?: string
+  scanFileName?: string;
   /**
    * 输出前置目录
-   * 比如初始打包后为`/a/b/c.html`,配置`/custom/`则变为`/custom/a/b/c.html`
-   * @default '/'
+   * 比如初始打包后为`a/b/c.html`,配置`custom`则变为`custom/a/b/c.html`
+   * @default ''
    */
-  outputFileDir?: string
-}
+  outputFileDir?: string;
+};
 ```
 
 ## 关于

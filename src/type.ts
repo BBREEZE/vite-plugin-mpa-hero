@@ -8,7 +8,7 @@ export type MPAHeroPluginOption = {
   /**
    * 要扫描的文件夹
    * 输出目录会从当前传递目录下一级开始
-   * @default ['/src/pages/']
+   * @default ['./src/pages/']
    */
   scanFileDir?: string[];
   /**
@@ -18,8 +18,8 @@ export type MPAHeroPluginOption = {
   scanFileName?: string;
   /**
    * 输出前置目录
-   * 比如初始打包后为`/a/b/c.html`,配置`/custom/`则变为`/custom/a/b/c.html`
-   * @default '/'
+   * 比如初始打包后为`a/b/c.html`,配置`custom`则变为`custom/a/b/c.html`
+   * @default ''
    */
   outputFileDir?: string;
 };

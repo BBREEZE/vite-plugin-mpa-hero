@@ -1,6 +1,6 @@
 export const defaultPluginOption = {
   templateName: 'template',
-  scanFileDir: ['/src/pages'],
+  scanFileDir: ['./src/pages'],
   scanFileName: 'main.js',
-  outputFileDir: './',
+  outputFileDir: '',
 };
