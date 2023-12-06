@@ -4,28 +4,28 @@ export type MPAHeroPluginOption = {
    * 假设当前目录不存在`[templateName].html`则查找父目录，直到根目录,根目录必须存在
    * @default 'template'
    */
-  templateName?: string
+  templateName?: string;
   /**
    * 要扫描的文件夹
    * 输出目录会从当前传递目录下一级开始
    * @default ['/src/pages/']
    */
-  scanFileDir?: string[]
+  scanFileDir?: string[];
   /**
    * 入口文件名,需要扫描获取作为入口的文件名
    * @default 'main.js'
    */
-  scanFileName?: string
+  scanFileName?: string;
   /**
    * 输出前置目录
    * 比如初始打包后为`/a/b/c.html`,配置`/custom/`则变为`/custom/a/b/c.html`
    * @default '/'
    */
-  outputFileDir?: string
-}
+  outputFileDir?: string;
+};
 
 export type MakeRequired<T> = {
-  [P in keyof T]-?: NonNullable<T[P]>; 
+  [P in keyof T]-?: NonNullable<T[P]>;
 };
 
 /** 入口类型 */
@@ -42,10 +42,10 @@ export type Entry = {
   virtualTemplateFilePath: string;
   /** 虚拟html文件的相对路径 */
   virtualTemplateFileRelativePath: string;
-}
+};
 
 /** 入口列表 */
-export type EntryList = Entry[]
+export type EntryList = Entry[];
 
 /** 目录树结构 */
 export type DirectoryTree = {
