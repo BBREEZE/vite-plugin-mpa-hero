@@ -2,10 +2,19 @@
   "name": "vite-plugin-mpa-hero",
   "private": false,
   "author": "www.xiaoluo.fun",
-  "version": "0.0.1",
-  "description": "vite plugin for mpa",
+  "version": "0.0.7",
   "type": "module",
-  "main": "index.ts",
+  "description": "vite plugin for mpa",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "keywords": [
     "vite-plugin",
     "mpa",
@@ -13,22 +22,30 @@
     "react",
     "vue"
   ],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "url": "https://github.com/BBREEZE/vite-plugin-mpa-hero.git"
   },
+  "tsup": {
+    "shims": false,
+    "minify": false,
+    "cjsInterop": true
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build"
+    "build": "tsc && vite build",
+    "build-npm": "tsup index.ts --format esm,cjs --dts --clean"
   },
   "devDependencies": {
     "@types/node": "^20.10.1",
     "@vitejs/plugin-react": "^4.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tsup": "^8.0.1",
     "typescript": "^5.3.2",
     "vite": "^5.0.4",
-    "vite-plugin-inspect": "^0.8.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "dependencies": {
+    "vite-plugin-inspect": "^0.8.1"
   }
 }

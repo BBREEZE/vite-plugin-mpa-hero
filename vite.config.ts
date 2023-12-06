@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import mpaHeroPlugin from './index.ts'
+import mpaHeroPlugin from './index'
 import react from '@vitejs/plugin-react'
 import Inspect from 'vite-plugin-inspect'
 
