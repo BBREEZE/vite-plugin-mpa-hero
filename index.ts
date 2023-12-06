@@ -68,7 +68,7 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
     configureServer(server) {
       server.middlewares.use(devServerMiddleware(entryList, mergedPluginOption, server));
     },
-    config(config, { command }) {
+    config(config) {
       // 处理 rollupOptions.input原始值,转换成object
       const inputSourceConfig = config.build?.rollupOptions?.input || {};
       let inputFinalConfig: Record<string, string> = {};
