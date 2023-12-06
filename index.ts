@@ -81,7 +81,7 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
         inputFinalConfig = inputSourceConfig;
       }
       Object.entries(inputConfig).forEach(([key, value]) => {
-        inputFinalConfig[key] = resolve(__dirname, value);
+        inputFinalConfig[key] = resolve('./', value);
       });
       const newConfig = { ...config };
       newConfig.build = {
