@@ -3,21 +3,21 @@ vite多页面构建插件，基于文件目录，可按规则输出打包文件�
 
 ## 已有功能
 
- 基于文件树打包
+* [x] 基于文件树打包
 
-:white_check_mark: 可配置多目录
+* [x] 可配置多目录
 
-:white_check_mark: 支持输出目录配置
+* [x] 支持输出目录配置
 
-:white_check_mark: 可配置html模板
+* [x] 可配置html模板
 
-:white_check_mark: html模板就近选择
+* [x] html模板就近选择
 
-:white_check_mark: 支持react
+* [x] 支持react
 
-:ballot_box_with_check: 支持vue
+* [ ] 支持vue
 
-:ballot_box_with_check: 支持原生js
+* [ ] 支持原生js
 
 
 ## 快速使用
