@@ -19,7 +19,7 @@ export type MPAHeroPluginOption = {
   /**
    * 输出前置目录
    * 比如初始打包后为`a/b/c.html`,配置`custom`则变为`custom/a/b/c.html`
-   * @default ''
+   * @default '.'
    */
   outputFileDir?: string;
 };
