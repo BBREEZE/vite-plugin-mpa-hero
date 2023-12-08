@@ -175,3 +175,28 @@ export const renderDirectoryTree = (data: DirectoryTree, fileName: string): stri
   }
   return html + `</ul>`;
 };
+
+
+export const genHTMLTemplate = (mergedPluginOption: MPAHeroPluginOption, entry: Entry) => {
+  const isDirect = mergedPluginOption.framework === 'direct'
+  let template = '';
+  const templatePath = entry?.templatePath || '';
+  // 读取获取到的模板文件
+  const templateContent = fs.readFileSync(
+    path.resolve(templatePath, `${mergedPluginOption.templateName}.html`),
+    'utf-8'
+  );
+  if(isDirect) {
+    const scriptContent = fs.readFileSync(entry?.entryPath || '', 'utf-8');
+    template = templateContent.replace(
+      '</body>',
+      `<script>${scriptContent}</script></body>`
+    );
+  }else {
+    template = templateContent.replace(
+      '</body>',
+      `<script type="module" src="/mpa-hero/${entry?.entryPath}"></script></body>`
+    );
+  }
+  return template
+}

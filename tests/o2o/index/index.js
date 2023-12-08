@@ -1,0 +1,1 @@
+export default () => document.getElementById('root').innerHTML = 'tests/o2o/index/index.js';

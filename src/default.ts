@@ -3,4 +3,5 @@ export const defaultPluginOption = {
   scanFileDir: ['./src/pages'],
   scanFileName: 'main.js',
   outputFileDir: '.',
+  framework: 'react18',
 };

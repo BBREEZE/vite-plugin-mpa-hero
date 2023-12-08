@@ -22,6 +22,12 @@ export type MPAHeroPluginOption = {
    * @default '.'
    */
   outputFileDir?: string;
+  /**
+   * 使用的框架
+   * @description 选择对应的框架或者自己编写挂载的入口
+   * @default 'react18'
+   */
+  framework?: 'vue2' | 'vue3' | 'react16' | 'react18' | 'esm' | 'direct' | string;
 };
 
 export type MakeRequired<T> = {
