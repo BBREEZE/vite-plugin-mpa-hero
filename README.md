@@ -48,6 +48,76 @@ export default defineConfig({
 2. 请在`[templateName].html`包含`id`为`root`的节点，打包后的内容会挂载在此节点
 3. 请严格按照配置项填写
 
+## 案例
+
+假设目录结构：
+```
+vite-template/
+├── src/
+│   ├── merchants/
+│   │   ├── index.html
+│   │   ├── shopList/
+│   │   │   ├── component/
+│   │   │   │   └── list.tsx
+│   │   │   ├── index.tsx
+│   │   │   └── index.html
+│   │   └── merchantList/
+│   │       └── index.tsx
+│   ├── marketing/
+│   │   ├── index.tsx
+│   │   └── rate/
+│   │       ├── index.tsx
+│   │       ├── first/
+│   │       │   └── index.tsx
+│   │       └── second/
+│   │           └── index.tsx
+│   └── index.html
+├── test/
+│   ├── merchants/
+│   │   ├── index.html
+│   │   └── shopList/
+│   │       └── index.tsx
+│   └── index.html
+├── index.html 
+└── vite.config.ts
+```
+vite.config.ts的配置如下
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import mpaHeroPlugin from 'vite-plugin-mpa-hero'
+
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react(), mpaHeroPlugin({
+    scanFileDir: ['./src'],
+    scanFileName: 'index.tsx',
+    templateName: 'index',
+  })]
+})
+
+```
+
+打包结果应该是
+```
+dist/
+└── merchants/
+    ├── shopList/
+    │   └── index.html
+    ├── merchantList/
+    │   └── index.html
+    └── marketing/
+        ├── index.html
+        └── rate/
+            ├── index.html
+            ├── first/
+            │   └── index.html
+            └── second/
+                └── index.html
+```
+
+
 ## Plugin Options
 
 ```javascript
