@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { Connect, ViteDevServer } from 'vite';
 import { EntryList, MPAHeroPluginOption, MakeRequired } from './type';
-import { renderDirectoryTree, buildDirectoryTree } from './core';
+import { renderDirectoryTree, buildDirectoryTree, genHTMLTemplate } from './core';
 import { devIndexTemplate } from './template/devIndexTemplate';
 import fs from 'fs';
 import path from 'path';
@@ -41,14 +41,7 @@ export const devServerMiddleware = (
     for (let index = 0; index < entries.length; index++) {
       // 如果对应虚拟模板存在
       if (entries[index].virtualTemplateFileRelativePath === url) {
-        const templateContent = fs.readFileSync(
-          path.resolve(entries[index].templatePath, `${opt.templateName}.html`),
-          'utf-8'
-        );
-        const template = templateContent.replace(
-          '</body>',
-          `<script type="module" src="/mpa-hero/${entries[index].entryPath}"></script></body>`
-        );
+        const template = genHTMLTemplate(opt, entries[index])
         const generatedHtml = await server.transformIndexHtml(url || '', template);
         res.end(generatedHtml);
         return;

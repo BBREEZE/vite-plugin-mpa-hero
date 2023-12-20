@@ -3,8 +3,8 @@ import fs from 'fs';
 import { Plugin } from 'vite';
 import { defaultPluginOption } from './src/default';
 import { Entry, MPAHeroPluginOption } from './src/type';
-import { genInputConfig } from './src/core';
-import { reactMiddleTemplate } from './src/template/middleTemplate';
+import { genHTMLTemplate, genInputConfig } from './src/core';
+import { customMiddleTemplate, directMiddleTemplate, react16MiddleTemplate, reactMiddleTemplate, vue2MiddleTemplate, vue3MiddleTemplate } from './src/template/middleTemplate';
 import { devServerMiddleware } from './src/dev-middleware';
 
 function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
@@ -19,6 +19,7 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
     scanFileName: mergedPluginOption.scanFileName,
     outputFileDir: mergedPluginOption.outputFileDir,
     templateName: mergedPluginOption.templateName,
+    framework: mergedPluginOption.framework,
   });
   // 获取所有的虚拟模块 entry.needVirtualTemplate
   const resolvedVirtualModuleIdMap: Map<string, Entry> = new Map();
@@ -44,25 +45,28 @@ function mpaHeroPlugin(pluginOption?: MPAHeroPluginOption): Plugin {
     load(id) {
       // 生成虚拟HTML模板
       if (resolvedVirtualModuleIdMap.has(id)) {
-        const entry = resolvedVirtualModuleIdMap.get(id);
-        let template = '';
-        const templatePath = entry?.templatePath || '';
-        // 读取获取到的模板文件
-        const templateContent = fs.readFileSync(
-          path.resolve(templatePath, `${mergedPluginOption.templateName}.html`),
-          'utf-8'
-        );
-        template = templateContent.replace(
-          '</body>',
-          `<script type="module" src="/mpa-hero/${entry?.entryPath}"></script></body>`
-        );
-
-        return template;
+        const entry = resolvedVirtualModuleIdMap.get(id)!;
+        return genHTMLTemplate(mergedPluginOption, entry);
       }
       // 生成对应的中间模板
       if (middleTemplateIdList.includes(id)) {
         const middleTemplatePath = id.replace('/mpa-hero', '');
-        return reactMiddleTemplate(middleTemplatePath);
+        switch(mergedPluginOption.framework) {
+          case 'react18':
+            return reactMiddleTemplate(middleTemplatePath);
+          case 'react16':
+            return react16MiddleTemplate(middleTemplatePath);
+          case 'vue2':
+            return vue2MiddleTemplate(middleTemplatePath);
+          case 'vue3':
+            return vue3MiddleTemplate(middleTemplatePath);
+          case 'direct': 
+            return directMiddleTemplate(middleTemplatePath);
+          case 'esm':
+            return customMiddleTemplate(middleTemplatePath);
+          default: 
+            throw new Error('需要配置正确的framework');
+        }
       }
     },
     configureServer(server) {

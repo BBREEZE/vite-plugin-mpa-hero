@@ -7,9 +7,10 @@ export default defineConfig({
   plugins: [Inspect(),react(),
     mpaHeroPlugin({
       scanFileDir: ['./tests'],
-      scanFileName: 'index.tsx',
+      scanFileName: 'index.js',
       templateName: 'index',
       outputFileDir: 'wjl',
+      framework: 'direct'
     })
   ],
   // build: {

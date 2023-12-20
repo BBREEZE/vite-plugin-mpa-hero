@@ -2,7 +2,7 @@
   "name": "vite-plugin-mpa-hero",
   "private": false,
   "author": "www.xiaoluo.fun",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "description": "vite plugin for mpa",
   "main": "./dist/index.js",

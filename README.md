@@ -145,8 +145,29 @@ export type MPAHeroPluginOption = {
    * @default '.'
    */
   outputFileDir?: string;
+  /**
+   * 使用的框架
+   * @description 选择对应的框架或者自己编写挂载的入口
+   * @default 'react18'
+   */
+  framework?: 'vue2' | 'vue3' | 'react16' | 'react18' | 'esm' | 'direct';
 };
 ```
+
+### MPAHeroPluginOption.framework
+
+#### esm
+使用`esm`模式时需要导出一个默认方法。例如：
+```javascript
+export default () => document.getElementById('root').innerHTML = 'tests/o2o/index/index.js'
+```
+
+#### direct
+使用`direct`模式时需自行设置`#root`内容。例如：
+```javascript
+document.getElementById('root').innerHTML = 'tests/o2o/index/index.js'
+```
+
 
 ## 关于
 
